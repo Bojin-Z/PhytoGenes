@@ -146,22 +146,7 @@ graph TD
     style M1 fill:#fffde7,stroke:#fbc02d,stroke-width:1px
     style M2 fill:#fffde7,stroke:#fbc02d,stroke-width:1px
     style M3 fill:#e8eaf6,stroke:#3f51b5,stroke-width:1px
-
-7. Setup & Requirements
-OS: Linux recommended.
-
-Language: Python 3.10+.
-
-Database: MySQL 8.0+.
-
-API Keys Required:
-
-LLM Provider (OpenAI / Anthropic / Google)
-
-SerpApi (for Google Scholar)
-
-ISP Proxy Service (for crawling)
-
+```
 ### 2.3 Setup & Requirements
 * OS: Linux recommended.
 
