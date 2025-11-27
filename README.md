@@ -41,108 +41,96 @@ To build a vertical AI agent based on the **Pydantic-AI** framework and **FastMC
 
 ### 2.2 System Modules
 ```mermaid
-graph TD
-    %% Global Styles
-    classDef process fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
-    classDef decision fill:#fff9c4,stroke:#fbc02d,stroke-width:2px;
-    classDef terminator fill:#eeeeee,stroke:#616161,stroke-width:2px;
-    classDef error fill:#ffcdd2,stroke:#c62828,stroke-width:2px,stroke-dasharray: 5 5;
-    classDef db fill:#e0e0e0,stroke:#333,stroke-width:2px,shape:cylinder;
-
-    Start((Start)):::terminator
-    End(((End Process))):::terminator
-
-    %% Module 1
-    subgraph M1 [3.1 Module 1: Input Preprocessing & Intent Recognition]
-        direction TB
-        Input[Receive User Natural Language Input]:::process
-        CheckGene{LLM Validation:<br/>Contains Valid Gene Name?}:::decision
-        ErrorInput[Return Error Hint:<br/>Invalid Input]:::error
-        Extract[Entity Extraction:<br/>Gene Name + Species Name]:::process
-    end
-
-    %% Module 2
-    subgraph M2 [3.2 Module 2: Intelligent Retrieval Routing]
-        direction TB
-        CheckSpecies{Is Species Name<br/>Extracted?}:::decision
-        
-        %% Right Branch: Specific Species
-        MatchTool[LLM Match FastMCP Tool<br/>e.g., Arabidopsis_TAIR_MCP]:::process
-        CallSpecific[Call Specific DB API<br/>+ Scholar_MCP with Species Keywords]:::process
-        
-        %% Left Branch: Broad Search
-        CallAll[Parallel Call to All<br/>Registered DB MCPs]:::process
-        CheckDBResult{Database Results<br/>Found?}:::decision
-        
-        %% Sub-branch: No DB Results
-        ScholarFull[Google Scholar<br/>Full-Text Search]:::process
-        CheckCount{Result Count > 100?}:::decision
-        CircuitBreaker[Circuit Breaker:<br/>Too many results & no match<br/>Stop & Return Error]:::error
-        
-        %% Sub-branch: DB Results Found
-        ScholarVerify[Google Scholar Secondary Verification<br/>Keywords: Result Species + User Gene Name]:::process
-    end
-
-    %% Module 3
-    subgraph M3 [3.3 Module 3: Data Cleaning & Archiving]
-        direction TB
-        Aggregation[Data Aggregation:<br/>JSON / HTML / Text]:::process
-        Schema[(Target DB Schema)]:::db
-        LLMClean[LLM Cleaning & Mapping<br/>Based on Pydantic-AI Structured Output]:::process
-        
-        Classify{Data Classification<br/>Mapping}:::decision
-        
-        TabExp[Table_Expression]:::process
-        TabFunc[Table_Function]:::process
-        TabSeq[Table_Sequence]:::process
-        
-        Persist[Generate SQL/ORM Object<br/>Persist to Database]:::process
-    end
-
-    %% Connections
-    Start --> Input
+---
+config:
+  layout: elk
+---
+flowchart TB
+ subgraph M1[" "]
+    direction TB
+        Input["Receive User Natural Language Input"]
+        CheckGene{"LLM Validation:<br>Contains Valid Gene Name?"}
+        ErrorInput["Return Error Hint:<br>Invalid Input"]
+        Extract["Entity Extraction:<br>Gene Name + Species Name"]
+  end
+ subgraph M2[" "]
+    direction TB
+        CheckSpecies{"Is Species Name<br>Extracted?"}
+        MatchTool["LLM Match FastMCP Tool<br>e.g., Arabidopsis_TAIR_MCP"]
+        CallSpecific["Call Specific DB API<br>+ Scholar_MCP with Species Keywords"]
+        CallAll["Parallel Call to All<br>Registered DB MCPs"]
+        CheckDBResult{"Database Results<br>Found?"}
+        ScholarFull["Google Scholar<br>Full-Text Search"]
+        CheckCount{"Result Count > 100?"}
+        CircuitBreaker["Circuit Breaker:<br>Too many results &amp; no match<br>Stop &amp; Return Error"]
+        ScholarVerify["Google Scholar Secondary Verification<br>Keywords: Result Species + User Gene Name"]
+  end
+ subgraph M3[" "]
+    direction TB
+        Aggregation["Data Aggregation:<br>JSON / HTML / Text"]
+        Schema[("Target DB Schema")]
+        LLMClean["LLM Cleaning &amp; Mapping<br>Based on Pydantic-AI Structured Output"]
+        Classify{"Data Classification<br>Mapping"}
+        TabExp["Table_Expression"]
+        TabFunc["Table_Function"]
+        TabSeq["Table_Sequence"]
+        Persist["Generate SQL/ORM Object<br>Persist to Database"]
+  end
+    Start(("Start")) --> Input
     Input --> CheckGene
-    
     CheckGene -- No --> ErrorInput
-    ErrorInput --> End
-    
+    ErrorInput --> End((("End Process")))
     CheckGene -- Yes --> Extract
     Extract --> CheckSpecies
-    
-    %% M2 Logic
     CheckSpecies -- Yes --> MatchTool
     MatchTool --> CallSpecific
     CallSpecific --> Aggregation
-    
     CheckSpecies -- No --> CallAll
     CallAll --> CheckDBResult
-    
     CheckDBResult -- Yes --> ScholarVerify
     ScholarVerify --> Aggregation
-    
     CheckDBResult -- No --> ScholarFull
     ScholarFull --> CheckCount
-    
     CheckCount -- Yes --> CircuitBreaker
     CircuitBreaker --> End
     CheckCount -- No --> Aggregation
-
-    %% M3 Logic
     Aggregation --> LLMClean
     Schema --> LLMClean
     LLMClean --> Classify
-    
-    Classify --> TabExp
-    Classify --> TabFunc
-    Classify --> TabSeq
-    
+    Classify --> TabExp & TabFunc & TabSeq
     TabExp --> Persist
     TabFunc --> Persist
     TabSeq --> Persist
-    
     Persist --> End
 
-    %% Styling for Subgraphs
+     Input:::process
+     CheckGene:::decision
+     ErrorInput:::error
+     Extract:::process
+     CheckSpecies:::decision
+     MatchTool:::process
+     CallSpecific:::process
+     CallAll:::process
+     CheckDBResult:::decision
+     ScholarFull:::process
+     CheckCount:::decision
+     CircuitBreaker:::error
+     ScholarVerify:::process
+     Aggregation:::process
+     Schema:::db
+     LLMClean:::process
+     Classify:::decision
+     TabExp:::process
+     TabFunc:::process
+     TabSeq:::process
+     Persist:::process
+     Start:::terminator
+     End:::terminator
+    classDef process fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef decision fill:#fff9c4,stroke:#fbc02d,stroke-width:2px
+    classDef terminator fill:#eeeeee,stroke:#616161,stroke-width:2px
+    classDef error fill:#ffcdd2,stroke:#c62828,stroke-width:2px,stroke-dasharray: 5 5
+    classDef db fill:#e0e0e0,stroke:#333,stroke-width:2px,shape:cylinder
     style M1 fill:#fffde7,stroke:#fbc02d,stroke-width:1px
     style M2 fill:#fffde7,stroke:#fbc02d,stroke-width:1px
     style M3 fill:#e8eaf6,stroke:#3f51b5,stroke-width:1px
