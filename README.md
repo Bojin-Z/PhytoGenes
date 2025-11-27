@@ -155,9 +155,6 @@ graph TD
 * Database: MySQL 8.0+.
 
 * API Keys Required:
-
-* LLM Provider (OpenAI / Anthropic / Google)
-
-* SerpApi (for Google Scholar)
-
-* ISP Proxy Service (for crawling)
+    * LLM Provider (OpenAI / Anthropic / Google)
+    * SerpApi (for Google Scholar)
+    * ISP Proxy Service (for crawling)
