@@ -41,6 +41,8 @@ To build a vertical AI agent based on the **Pydantic-AI** framework and **FastMC
 
 ### 2.2 System Modules
 
+### 2.2 System Modules
+
 ```mermaid
 graph TD
     User[User Input] --> Preprocess[Preprocess: Entity Extraction]
@@ -49,16 +51,19 @@ graph TD
     subgraph Retrieval_Layer [FastMCP Servers]
         Router -- Specific Species --> SpecificDB[Species DB MCP]
         Router -- Generic Search --> BroadDB[Broad DB Search MCP]
-        SpecificDB & BroadDB --> Scholar[Scholar MCP (Literature)]
+        SpecificDB --> Scholar[Scholar MCP - Literature]
+        BroadDB --> Scholar
         
         BroadDB -- No Results/Circuit Breaker --> Error[Return Error Hint]
     end
     
     subgraph Infrastructure [Infra Layer]
-        SpecificDB -.-> Crawler[High-Resistance Crawler (Selenium/Proxy)]
+        SpecificDB -.-> Crawler[High-Resistance Crawler]
         Scholar -.-> SerpApi[SerpApi]
     end
     
     Retrieval_Layer --> Cleaner[Data Cleaning]
+    Cleaner --> LLM[LLM Structured Mapping]
+    LLM --> DB[(MySQL Database)]
     Cleaner --> LLM[LLM Structured Mapping]
     LLM --> DB[(MySQL Database)]
