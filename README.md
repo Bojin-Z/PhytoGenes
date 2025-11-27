@@ -1,6 +1,6 @@
 # PhytoGenes - Plant Gene Knowledge Intelligent Retrieval Agent
 
-[![Python Version](https://img.shields.io/badge/python-3.12-blue)](https://www.python.org/)
+[![Python Version](https://img.shields.io/badge/python-3.10+-blue)](https://www.python.org/)
 [![Framework](https://img.shields.io/badge/Agent-Pydantic--AI-green)](https://github.com/pydantic/pydantic-ai)
 [![Protocol](https://img.shields.io/badge/Protocol-FastMCP-orange)](https://github.com/punkpeye/fastmcp)
 [![License](https://img.shields.io/badge/license-MIT-grey)](LICENSE)
