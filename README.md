@@ -74,7 +74,7 @@ flowchart TB
         TabExp["Table_Expression"]
         TabFunc["Table_Function"]
         TabSeq["Table_Sequence"]
-        Persist["Generate SQL/ORM Object<br>Persist to Database"]
+        Persist["Generate SQL Object<br>Persist to Database"]
   end
     Start(("Start")) --> Input
     Input --> CheckGene
